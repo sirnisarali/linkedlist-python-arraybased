@@ -1,0 +1,108 @@
+# Global Declarations
+nullPtr = -1
+maxSize = 10
+startPtr = nullPtr
+data = [""] * maxSize
+Pointer = [nullPtr] * maxSize
+
+freePtr = 0
+
+def initilise():
+    for i in range(maxSize-1):
+        Pointer[i]= i + 1
+    Pointer[maxSize-1] = nullPtr
+
+def insertNode(newData):
+    global startPtr, freePtr
+
+    if freePtr == nullPtr:  # list full
+        print("No space to insert.")
+        return
+    # take a node from the free list
+    newNodePtr = freePtr
+    freePtr = Pointer[freePtr]
+
+    # store the data
+    data[newNodePtr] = newData
+
+    #If list is empty or new Data is smaller than the first element
+    if startPtr == nullPtr or newData < data[startPtr]:
+        Pointer[newNodePtr] = startPtr  # new node is pointed to now where means nullPointer
+        startPtr = newNodePtr           # start pointer is connected to new node
+        return
+
+    #otherwise, find the correct position
+    prevPtr = startPtr
+    currentPtr = Pointer[startPtr]
+    while currentPtr != nullPtr and data[currentPtr] < newData:
+        prevPtr = currentPtr
+        currentPtr = Pointer[currentPtr]
+
+    #insert new Node
+    Pointer[newNodePtr] = currentPtr
+    Pointer[prevPtr] = newNodePtr
+    print("Value is inserted successfully.")
+
+def deleteNode(item):
+    global startPtr, freePtr
+    if startPtr == nullPtr:
+        print("Linked List empty.")
+    else:
+        prevPtr = startPtr
+        currentPtr = Pointer[startPtr]
+        while currentPtr != nullPtr and data[currentPtr] != item:
+            prevPtr = currentPtr
+            currentPtr = Pointer[currentPtr]
+        if currentPtr == nullPtr:
+            print("Item", item, " not found")
+            return
+        tempPtr = currentPtr
+        Pointer[prevPtr] = Pointer[currentPtr]
+
+        # add deleted node to free list
+        Pointer[tempPtr] = freePtr
+        freePtr = tempPtr
+        print(f"Deleted : {item}")
+
+def traverse():
+    global startPtr, nullPtr
+    current = startPtr
+    print("The start Pointer:", current)
+    print("Address", "Data", "Pointer")
+    while current != nullPtr:
+        print(current, "      ", data[current], "    ", Pointer[current])
+        current = Pointer[current]
+
+def main():
+
+    initilise()
+    print()
+    print("-----LINKED LIST MENU---------")
+    print("[1.Insert], [2. Delete], [3. Traverse], [4. Quit]")
+    choice= int(input("Select your choice:"))
+
+    while choice != 4:
+        if choice == 1:
+            value=input("Enter a value to insert in linked list:")
+            insertNode(value)
+        elif choice == 2:
+            item = input("Enter a value to delete linked list:")
+            deleteNode(item)
+        elif choice == 3:
+            traverse()
+        else:
+            print("Invalid choice..")
+        print()
+
+        print("[1.Insert], [2. Delete], [3. Traverse], [4. Quit]")
+        choice = int(input("Select your choice:"
+                           ))
+
+    print("Thanks for using the menu...")
+
+if __name__=="__main__":
+    main()
+
+
+
+
